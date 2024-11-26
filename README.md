@@ -34,7 +34,7 @@ The [asset](/asset) package is a tool for obtaining information about the data a
 
 #### Price
 
-The [price](/price) package is a tool to receive and package prices obtained from oracles used in a selected pool.
+The [price](/price) package is a tool to get and package prices obtained from oracles used in a selected pool.
 
 #### Principal
 
