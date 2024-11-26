@@ -14,6 +14,7 @@ The EVAA GO SDK is designed to easily integrate with the EVAA lending protocol o
   * [Asset](#asset)
   * [Price](#price)
   * [Principal](#principal)
+  * [Transaction](#transaction)
 
 ### Installing
 
