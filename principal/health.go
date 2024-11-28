@@ -2,13 +2,15 @@ package principal
 
 import (
 	"fmt"
-	"github.com/evaafi/evaa-go-sdk/asset"
-	"github.com/evaafi/evaa-go-sdk/config"
+	"math"
+	"math/big"
+
 	"github.com/xssnick/tonutils-go/address"
 	"github.com/xssnick/tonutils-go/tlb"
 	"github.com/xssnick/tonutils-go/tvm/cell"
-	"math"
-	"math/big"
+
+	"github.com/evaafi/evaa-go-sdk/asset"
+	"github.com/evaafi/evaa-go-sdk/config"
 )
 
 type Service struct {
@@ -159,11 +161,15 @@ func (s *Service) PredictHealthFactor(user UserBalancer, assets assetManager, pr
 	}
 	health := s.CalculateHealth(user, assets, prices)
 
-	if health.TotalLimit.Sign() <= 0 {
+	return health.Factor()
+}
+
+func (h *Health) Factor() float64 {
+	if h.TotalLimit.Sign() <= 0 {
 		return 1
 	}
 
-	hf, _ := new(big.Rat).Quo(new(big.Rat).SetInt(health.TotalDebt), new(big.Rat).SetInt(health.TotalLimit)).Float64()
+	hf, _ := new(big.Rat).Quo(new(big.Rat).SetInt(h.TotalDebt), new(big.Rat).SetInt(h.TotalLimit)).Float64()
 	return math.Min(math.Max(0, 1-hf), 1)
 }
 
