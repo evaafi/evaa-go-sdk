@@ -62,7 +62,7 @@ func (w *Wallet) SendLiquidation(ctx context.Context, data *LiquidationParameter
 	dst := w.config.MasterAddress
 	asset := w.config.Assets[data.LoanAsset.String()]
 	if asset.JettonMasterAddress != nil {
-		amount = big.NewInt(config.FeeLiquidation)
+		amount = big.NewInt(config.FeeLiquidationJetton)
 		dst, err = asset.GetJettonWalletAddress(w.wallet.WalletAddress())
 		if err != nil {
 			return fmt.Errorf("failed to get jetton wallet address, err: %w", err)
