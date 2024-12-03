@@ -80,7 +80,7 @@ const (
 
 const (
 	MainnetVersion = 6
-	TestnetVersion = 0
+	TestnetVersion = 1
 	LpVersion      = 3
 )
 
