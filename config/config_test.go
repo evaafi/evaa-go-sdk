@@ -5,6 +5,34 @@ import (
 )
 
 func TestAssetConfig_GetJettonWalletAddress(t *testing.T) {
+	t.Run("AltsMainnetConfigAssets", func(t *testing.T) {
+		cfg := GetAltsMainnetConfig()
+
+		if jettonAddress, err := cfg.Assets[USDT.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
+			t.Errorf("failed to get USDT jettonWalletAddress, err: %s", err)
+		} else if jettonAddress.String() != "EQC80-XeudkLZ65VkiudrNOKwfU1fUpgF8yj97afIhuzo951" {
+			t.Errorf("failed to get USDT jettonWalletAddress, got %s", jettonAddress.String())
+		}
+
+		if jettonAddress, err := cfg.Assets[DOGS.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
+			t.Errorf("failed to get DOGS jettonWalletAddress, err: %s", err)
+		} else if jettonAddress.String() != "EQBQ0PZtEs2Lbkn-jeu1Z-PMcQ_2KxWQBum6J_tA1S6cMZ6K" {
+			t.Errorf("failed to get DOGS jettonWalletAddress, got %s", jettonAddress.String())
+		}
+
+		if jettonAddress, err := cfg.Assets[NOT.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
+			t.Errorf("failed to get NOT jettonWalletAddress, err: %s", err)
+		} else if jettonAddress.String() != "EQBo-Q2Oxj36A8IGCckDXpGT7kfz5uTfdGd1thwOKhSmmfv-" {
+			t.Errorf("failed to get NOT jettonWalletAddress, got %s", jettonAddress.String())
+		}
+
+		if jettonAddress, err := cfg.Assets[CATI.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
+			t.Errorf("failed to get CATI jettonWalletAddress, err: %s", err)
+		} else if jettonAddress.String() != "EQBreegYC45a6m8XQ_sGb6aXIGWb-Vgrc6DGCSL8lUVAPFW1" {
+			t.Errorf("failed to get CATI jettonWalletAddress, got %s", jettonAddress.String())
+		}
+	})
+
 	t.Run("MainMainnetConfigAssets", func(t *testing.T) {
 		cfg := GetMainMainnetConfig()
 

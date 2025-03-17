@@ -47,7 +47,7 @@ func (c *AssetConfig) GetJettonWalletAddress(walletAddress *address.Address) (*a
 	switch c.Name {
 	case TON:
 		return nil, errors.New("asset is TON")
-	case USDT:
+	case USDT, DOGS, NOT:
 		data = cell.BeginCell().
 			MustStoreUInt(0, 4).
 			MustStoreCoins(0).
@@ -146,6 +146,58 @@ func GetMainMainnetConfig() *Config {
 				Decimals:            9,
 				JettonMasterAddress: address.MustParseAddr(TSTONJettonAddress),
 				JettonWalletCode:    getCellFromHex(CodeWalletTSTON),
+			},
+		},
+		LendingCode: getCellFromHex(CodeLending),
+	}
+}
+
+func GetAltsMainnetConfig() *Config {
+	return &Config{
+		MasterAddress: address.MustParseAddr(AltsMainnet),
+		MasterVersion: AltsVersion,
+		MasterParams:  GetMasterParams(),
+		Oracles: []*OracleNFT{
+			{ID: 0, Address: "0xd3a8c0b9fd44fd25a49289c631e3ac45689281f2f8cf0744400b4c65bed38e5d"},
+			{ID: 1, Address: "0x2c21cabdaa89739de16bde7bc44e86401fac334a3c7e55305fe5e7563043e191"},
+			{ID: 2, Address: "0x2eb258ce7b5d02466ab8a178ad8b0ba6ffa7b58ef21de3dc3b6dd359a1e16af0"},
+			{ID: 3, Address: "0xf9a0769954b4430bca95149fb3d876deb7799d8f74852e0ad4ccc5778ce68b52"},
+		},
+		MinimalOracles: 3,
+		Assets: map[string]*AssetConfig{
+			TON.Sha256Hash().String(): {
+				Name:                TON,
+				ID:                  TON.Sha256Hash(),
+				Decimals:            9,
+				JettonMasterAddress: nil,
+			},
+			USDT.ID(): {
+				Name:                USDT,
+				ID:                  USDT.Sha256Hash(),
+				Decimals:            6,
+				JettonMasterAddress: address.MustParseAddr(USDTJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletUSDT),
+			},
+			CATI.ID(): {
+				Name:                CATI,
+				ID:                  CATI.Sha256Hash(),
+				Decimals:            9,
+				JettonMasterAddress: address.MustParseAddr(CATIJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletCati),
+			},
+			DOGS.ID(): {
+				Name:                DOGS,
+				ID:                  DOGS.Sha256Hash(),
+				Decimals:            9,
+				JettonMasterAddress: address.MustParseAddr(DOGSJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletDogs),
+			},
+			NOT.ID(): {
+				Name:                NOT,
+				ID:                  NOT.Sha256Hash(),
+				Decimals:            9,
+				JettonMasterAddress: address.MustParseAddr(NOTJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletNot),
 			},
 		},
 		LendingCode: getCellFromHex(CodeLending),
