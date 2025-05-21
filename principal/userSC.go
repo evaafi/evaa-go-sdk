@@ -1,12 +1,13 @@
 package principal
 
 import (
+	"maps"
+	"math/big"
+
 	"github.com/evaafi/evaa-go-sdk/asset"
 	"github.com/xssnick/tonutils-go/address"
 	"github.com/xssnick/tonutils-go/ton"
 	"github.com/xssnick/tonutils-go/tvm/cell"
-	"maps"
-	"math/big"
 )
 
 type UserSC struct {
@@ -187,4 +188,9 @@ func (u *UserSC) SetData(userData *ton.ExecutionResult) (UserBalancer, error) {
 	}
 	//}
 	return u, nil
+}
+
+func (u *UserSC) SetPrincipals(principals map[string]*big.Int) UserBalancer {
+	u.principals = maps.Clone(principals)
+	return u
 }
