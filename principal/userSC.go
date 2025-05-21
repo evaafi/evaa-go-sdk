@@ -188,3 +188,8 @@ func (u *UserSC) SetData(userData *ton.ExecutionResult) (UserBalancer, error) {
 	//}
 	return u, nil
 }
+
+func (u *UserSC) SetPrincipals(principals map[string]*big.Int) UserBalancer {
+    u.principals = maps.Clone(principals)
+    return u
+}
