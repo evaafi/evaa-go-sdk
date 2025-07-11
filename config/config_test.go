@@ -67,6 +67,28 @@ func TestAssetConfig_GetJettonWalletAddress(t *testing.T) {
 		}
 	})
 
+	t.Run("StableMainnetConfigAssets", func(t *testing.T) {
+		cfg := GetStableMainnetConfig()
+
+		if jettonAddress, err := cfg.Assets[USDE.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
+			t.Errorf("failed to get USDE jettonWalletAddress, err: %s", err)
+		} else if jettonAddress.String() != "EQA9G6N4empzLVJ0-7piTttlen0Y_l1xoQCHejYfvowCVGxI" {
+			t.Errorf("failed to get USDE jettonWalletAddress, got %s", jettonAddress.String())
+		}
+
+		if jettonAddress, err := cfg.Assets[TSUSDE.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
+			t.Errorf("failed to get tsUSDe jettonWalletAddress, err: %s", err)
+		} else if jettonAddress.String() != "EQDRbwRmZugGg9ddiJ73BKsz2l9onEHxqaPFIRmsGy73B6EY" {
+			t.Errorf("failed to get tsUSDe jettonWalletAddress, got %s", jettonAddress.String())
+		}
+
+		if jettonAddress, err := cfg.Assets[PT_tsUSDe_01Sep2025.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
+			t.Errorf("failed to get pt tsUSDe jettonWalletAddress, err: %s", err)
+		} else if jettonAddress.String() != "EQByUfN7uMraWujassIak0TVcrpWIOyNkDArcIoolSTxZJ4D" {
+			t.Errorf("failed to get pt tsUSDe jettonWalletAddress, got %s", jettonAddress.String())
+		}
+	})
+
 	t.Run("LpMainnetConfigAssets", func(t *testing.T) {
 		cfg := GetLpMainnetConfig()
 

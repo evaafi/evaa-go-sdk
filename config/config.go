@@ -47,7 +47,7 @@ func (c *AssetConfig) GetJettonWalletAddress(walletAddress *address.Address) (*a
 	switch c.Name {
 	case TON:
 		return nil, errors.New("asset is TON")
-	case USDT, DOGS, NOT:
+	case USDT, DOGS, NOT, USDE:
 		data = cell.BeginCell().
 			MustStoreUInt(0, 4).
 			MustStoreCoins(0).
@@ -62,6 +62,21 @@ func (c *AssetConfig) GetJettonWalletAddress(walletAddress *address.Address) (*a
 			MustStoreRef(c.JettonWalletCode).
 			MustStoreCoins(0).
 			MustStoreUInt(0, 48).
+			EndCell()
+	case PT_tsUSDe_01Sep2025:
+		data = cell.BeginCell().
+				MustStoreCoins(0).
+				MustStoreAddr(walletAddress).
+				MustStoreAddr(c.JettonMasterAddress).
+				EndCell()
+	case TSUSDE:
+		data = cell.BeginCell().
+			MustStoreUInt(0, 4).
+			MustStoreCoins(0).
+			MustStoreAddr(walletAddress).
+			MustStoreAddr(c.JettonMasterAddress).
+			MustStoreCoins(0).
+			MustStoreUInt(0, 64).
 			EndCell()
 	default:
 		data = cell.BeginCell().
@@ -204,6 +219,53 @@ func GetAltsMainnetConfig() *Config {
 	}
 }
 
+func GetStableMainnetConfig() *Config {
+	return &Config{
+		MasterAddress: address.MustParseAddr(StableMainnet),
+		MasterVersion: StableVersion,
+		MasterParams:  GetMasterParams(),
+		Oracles: []*OracleNFT{
+			{ID: 0, Address: "0xd3a8c0b9fd44fd25a49289c631e3ac45689281f2f8cf0744400b4c65bed38e5d"},
+			{ID: 1, Address: "0x2c21cabdaa89739de16bde7bc44e86401fac334a3c7e55305fe5e7563043e191"},
+			{ID: 2, Address: "0x2eb258ce7b5d02466ab8a178ad8b0ba6ffa7b58ef21de3dc3b6dd359a1e16af0"},
+			{ID: 3, Address: "0xf9a0769954b4430bca95149fb3d876deb7799d8f74852e0ad4ccc5778ce68b52"},
+		},
+		MinimalOracles: 3,
+		Assets: map[string]*AssetConfig{
+			USDT.ID(): {
+				Name:                USDT,
+				ID:                  USDT.Sha256Hash(),
+				Decimals:            6,
+				JettonMasterAddress: address.MustParseAddr(USDTJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletUSDT),
+			},
+			USDE.ID(): {
+				Name:                USDE,
+				ID:                  USDE.Sha256Hash(),
+				Decimals:            6,
+				JettonMasterAddress: address.MustParseAddr(USDEJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletUSDe),
+			},
+			TSUSDE.ID(): {
+				Name:                TSUSDE,
+				ID:                  TSUSDE.Sha256Hash(),
+				Decimals:            6,
+				JettonMasterAddress: address.MustParseAddr(TSUSDEJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletTsUsde),
+			},
+			PT_tsUSDe_01Sep2025.ID(): {
+				Name:                PT_tsUSDe_01Sep2025,
+				ID:                  PT_tsUSDe_01Sep2025.Sha256Hash(),
+				Decimals:            9,
+				JettonMasterAddress: address.MustParseAddr(PT_tsUSDe_01Sep2025JettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletPT_tsUSDe_01Sep2025),
+			},
+
+		},
+		LendingCode: getCellFromHex(CodeLending),
+	}
+}
+
 func GetMasterTestnetConfig() *Config {
 	return &Config{
 		MasterAddress: address.MustParseAddr(MasterTestnet),
@@ -243,6 +305,20 @@ func GetMasterTestnetConfig() *Config {
 				Decimals:            9,
 				JettonMasterAddress: address.MustParseAddr(STTONJettonAddressTestnet),
 				JettonWalletCode:    getCellFromHex(CodeWalletSTTONTestnet),
+			},
+			USDE.ID(): {
+				Name:                USDE,
+				ID:                  USDE.Sha256Hash(),
+				Decimals:            6,
+				JettonMasterAddress: address.MustParseAddr(USDEJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletUSDe),
+			},
+			TSUSDE.ID(): {
+				Name:                TSUSDE,
+				ID:                  TSUSDE.Sha256Hash(),
+				Decimals:            6,
+				JettonMasterAddress: address.MustParseAddr(TSUSDEJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletTsUsde),
 			},
 		},
 		LendingCode: getCellFromHex(CodeLending),
