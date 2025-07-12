@@ -162,6 +162,20 @@ func GetMainMainnetConfig() *Config {
 				JettonMasterAddress: address.MustParseAddr(TSTONJettonAddress),
 				JettonWalletCode:    getCellFromHex(CodeWalletTSTON),
 			},
+			USDE.ID(): {
+				Name:                USDE,
+				ID:                  USDE.Sha256Hash(),
+				Decimals:            6,
+				JettonMasterAddress: address.MustParseAddr(USDEJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletUSDe),
+			},
+			TSUSDE.ID(): {
+				Name:                TSUSDE,
+				ID:                  TSUSDE.Sha256Hash(),
+				Decimals:            6,
+				JettonMasterAddress: address.MustParseAddr(TSUSDEJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletTsUsde),
+			},
 		},
 		LendingCode: getCellFromHex(CodeLending),
 	}
