@@ -228,6 +228,13 @@ func GetAltsMainnetConfig() *Config {
 				JettonMasterAddress: address.MustParseAddr(NOTJettonAddress),
 				JettonWalletCode:    getCellFromHex(CodeWalletNot),
 			},
+			STON.ID(): {
+				Name:                STON,
+				ID:                  STON.Sha256Hash(),
+				Decimals:            9,
+				JettonMasterAddress: address.MustParseAddr(STONJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletSTON),
+			},
 		},
 		LendingCode: getCellFromHex(CodeLending),
 	}
@@ -385,6 +392,13 @@ func GetLpMainnetConfig() *Config {
 				Decimals:            9,
 				JettonMasterAddress: address.MustParseAddr(TONUSDTDeDustJettonAddress),
 				JettonWalletCode:    getCellFromHex(CodeWalletTonUsdtDeDust),
+			},
+			TONUSDT_STONFI.ID(): {
+				Name:                TONUSDT_STONFI,
+				ID:                  TONUSDT_STONFI.Sha256Hash(),
+				Decimals:            9,
+				JettonMasterAddress: address.MustParseAddr(TONUSDTStonfiJettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletTonUsdtSton),
 			},
 		},
 		LendingCode: getCellFromHex(CodeLending),
