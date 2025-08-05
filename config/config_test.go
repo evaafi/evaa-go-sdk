@@ -31,6 +31,13 @@ func TestAssetConfig_GetJettonWalletAddress(t *testing.T) {
 		} else if jettonAddress.String() != "EQBreegYC45a6m8XQ_sGb6aXIGWb-Vgrc6DGCSL8lUVAPFW1" {
 			t.Errorf("failed to get CATI jettonWalletAddress, got %s", jettonAddress.String())
 		}
+
+				
+		if jettonAddress, err := cfg.Assets[STON.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
+			t.Errorf("failed to get STON jettonWalletAddress, err: %s", err)
+		} else if jettonAddress.String() != "EQDXhXpiRYd5hs8x9FnxfCCLqI5dzoB4Lww8MYVVTeTsOC8s" {
+			t.Errorf("failed to get STON jettonWalletAddress, got %s", jettonAddress.String())
+		}
 	})
 
 	t.Run("MainMainnetConfigAssets", func(t *testing.T) {
@@ -110,11 +117,11 @@ func TestAssetConfig_GetJettonWalletAddress(t *testing.T) {
 			t.Errorf("failed to get USDT_STORM jettonWalletAddress, got %s", jettonAddress.String())
 		}
 
-		//if jettonAddress, err := cfg.Assets[TONUSDT_STONFI.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
-		//	t.Errorf("failed to get TONUSDT_STONFI jettonWalletAddress, err: %s", err)
-		//} else if jettonAddress.String() != "EQBwbF0otxLyA3VrRjjC1q7i3G7LtoEpdyBjZEuNtrhC4drm" {
-		//	t.Errorf("failed to get TONUSDT_STONFI jettonWalletAddress, got %s", jettonAddress.String())
-		//}
+		if jettonAddress, err := cfg.Assets[TONUSDT_STONFI.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
+			t.Errorf("failed to get TONUSDT_STONFI jettonWalletAddress, err: %s", err)
+		} else if jettonAddress.String() != "EQB6CexyZvvlh-NWP0o0dKdGhbGHHwMGgJS9N1TmVaTEqz4X" {
+			t.Errorf("failed to get TONUSDT_STONFI jettonWalletAddress, got %s", jettonAddress.String())
+		}
 
 		if jettonAddress, err := cfg.Assets[TONUSDT_DEDUST.ID()].GetJettonWalletAddress(cfg.MasterAddress); err != nil {
 			t.Errorf("failed to get TONUSDT_DEDUST jettonWalletAddress, err: %s", err)
