@@ -228,13 +228,13 @@ func GetAltsMainnetConfig() *Config {
 				JettonMasterAddress: address.MustParseAddr(NOTJettonAddress),
 				JettonWalletCode:    getCellFromHex(CodeWalletNot),
 			},
-			STON.ID(): {
+			/*STON.ID(): {
 				Name:                STON,
 				ID:                  STON.Sha256Hash(),
 				Decimals:            9,
 				JettonMasterAddress: address.MustParseAddr(STONJettonAddress),
 				JettonWalletCode:    getCellFromHex(CodeWalletSTON),
-			},
+			},*/
 		},
 		LendingCode: getCellFromHex(CodeLending),
 	}
