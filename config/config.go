@@ -63,12 +63,12 @@ func (c *AssetConfig) GetJettonWalletAddress(walletAddress *address.Address) (*a
 			MustStoreCoins(0).
 			MustStoreUInt(0, 48).
 			EndCell()
-	case PT_tsUSDe_01Sep2025:
+	case PT_tsUSDe_01Sep2025, PT_tsUSDe_18Dec2025:
 		data = cell.BeginCell().
-				MustStoreCoins(0).
-				MustStoreAddr(walletAddress).
-				MustStoreAddr(c.JettonMasterAddress).
-				EndCell()
+			MustStoreCoins(0).
+			MustStoreAddr(walletAddress).
+			MustStoreAddr(c.JettonMasterAddress).
+			EndCell()
 	case TSUSDE:
 		data = cell.BeginCell().
 			MustStoreUInt(0, 4).
@@ -86,11 +86,98 @@ func (c *AssetConfig) GetJettonWalletAddress(walletAddress *address.Address) (*a
 			MustStoreRef(c.JettonWalletCode).
 			EndCell()
 	}
+	// Special handling for PT_tsUSDe_18Dec2025 - uses close address calculation
+	if c.Name.ID() == PT_tsUSDe_18Dec2025.ID() {
+		stateInit := cell.BeginCell().
+			MustStoreUInt(1, 1).
+			MustStoreUInt(8, 5).
+			MustStoreUInt(0, 1).
+			MustStoreMaybeRef(c.JettonWalletCode).
+			MustStoreMaybeRef(data).
+			MustStoreUInt(0, 1).
+			EndCell()
+
+		walletAddr := address.NewAddress(0, 0, stateInit.Hash())
+		closeAddr, err := calculateCloseAddress(walletAddr, c.JettonMasterAddress)
+		if err != nil {
+			return nil, fmt.Errorf("failed to calculate close address: %w", err)
+		}
+		return closeAddr, nil
+	}
+
 	walletStateInitCell, err := tlb.ToCell(&tlb.StateInit{Code: c.JettonWalletCode, Data: data})
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert StateInit to Cell, err: %w", err)
 	}
-	return address.NewAddress(0, 0, walletStateInitCell.Hash()), nil
+
+	walletAddr := address.NewAddress(0, 0, walletStateInitCell.Hash())
+	return walletAddr, nil
+}
+
+const (
+	jettonAddressBits = 256
+	closeRewriteBits  = 8
+)
+
+// calculateCloseAddress calculates a "close address" by combining bits from source and target addresses.
+// It takes the lower (jettonAddressBits - closeRewriteBits) bits from source and the upper closeRewriteBits bits from target.
+// This is used for PT_tsUSDe_18Dec2025 to create a special wallet address format.
+func calculateCloseAddress(source, target *address.Address) (*address.Address, error) {
+	if source == nil || target == nil {
+		return nil, errors.New("address is nil-pointer")
+	}
+
+	sourceData := source.Data()
+	targetData := target.Data()
+
+	const hashBytes = jettonAddressBits / 8
+	if len(sourceData) != hashBytes || len(targetData) != hashBytes {
+		return nil, fmt.Errorf("unexpected address data length")
+	}
+
+	curHash := new(big.Int).SetBytes(sourceData)
+	desiredHash := new(big.Int).SetBytes(targetData)
+
+	mask := maskForBits(jettonAddressBits - closeRewriteBits)
+	maxValue := maskForBits(jettonAddressBits)
+	antimask := new(big.Int).Xor(mask, maxValue)
+
+	newHash := new(big.Int).Or(
+		new(big.Int).And(curHash, mask),
+		new(big.Int).And(desiredHash, antimask),
+	)
+
+	hashBytesData, err := bigIntToFixedBytes(newHash, hashBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return address.NewAddress(0, 0, hashBytesData), nil
+}
+
+// maskForBits creates a bitmask with the specified number of bits set to 1.
+// For example, maskForBits(8) returns 0xFF (255).
+func maskForBits(bits int) *big.Int {
+	if bits <= 0 {
+		return big.NewInt(0)
+	}
+
+	return new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), uint(bits)), big.NewInt(1))
+}
+
+// bigIntToFixedBytes converts a big.Int to a byte slice of fixed size.
+// The value is right-aligned (padded with zeros on the left if necessary).
+func bigIntToFixedBytes(value *big.Int, size int) ([]byte, error) {
+	if value == nil {
+		return nil, errors.New("big.Int value is nil")
+	}
+	if value.BitLen() > size*8 {
+		return nil, fmt.Errorf("value exceeds %d bits", size*8)
+	}
+
+	buf := make([]byte, size)
+	value.FillBytes(buf)
+	return buf, nil
 }
 
 type OracleNFT struct {
@@ -281,7 +368,13 @@ func GetStableMainnetConfig() *Config {
 				JettonMasterAddress: address.MustParseAddr(PT_tsUSDe_01Sep2025JettonAddress),
 				JettonWalletCode:    getCellFromHex(CodeWalletPT_tsUSDe_01Sep2025),
 			},
-
+			PT_tsUSDe_18Dec2025.ID(): {
+				Name:                PT_tsUSDe_18Dec2025,
+				ID:                  PT_tsUSDe_18Dec2025.Sha256Hash(),
+				Decimals:            9,
+				JettonMasterAddress: address.MustParseAddr(PT_tsUSDe_18Dec2025JettonAddress),
+				JettonWalletCode:    getCellFromHex(CodeWalletPT_tsUSDe_18Dec2025),
+			},
 		},
 		LendingCode: getCellFromHex(CodeLending),
 	}
